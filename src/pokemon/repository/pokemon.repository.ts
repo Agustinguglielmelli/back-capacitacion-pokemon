@@ -17,4 +17,27 @@ export class PokemonRepository {
     };
     return this.prisma.pokemon.create({ data });
   }
+
+  async getPokemonByid (id: number): Promise<Pokemon | null> {
+    return this.prisma.pokemon.findUnique({
+      where: { id },
+    });
+  }
+
+  async updatePokemon(id: number, data: PokemonDto) {
+    return this.prisma.pokemon.update({
+      where: { id },
+      data,
+    });
+  }
+  async deletePokemon(id: number): Promise<Pokemon> {
+    return this.prisma.pokemon.delete({
+      where: { id },
+    });
+  }
+
+  async findAll(): Promise<Pokemon[]> {
+    return this.prisma.pokemon.findMany();
+  }
+
 }

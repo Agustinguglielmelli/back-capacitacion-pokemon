@@ -10,7 +10,7 @@ import {
 import { PokemonService } from '../service/pokemon.service';
 import { PokemonDto } from '../dto/pokemonDto';
 
-@Controller('pokemon')
+@Controller('pokemons')
 export class PokemonController {
   constructor(private readonly pokemonService: PokemonService) {}
 
@@ -24,12 +24,12 @@ export class PokemonController {
     return this.pokemonService.findAll();
   }
 
-  @Get(':id')
+  @Get('/:id')
   findOne(@Param('id') id: string) {
-    return this.pokemonService.findOne(+id);
+    return this.pokemonService.findOnePokemon(+id); // the + converts to number
   }
 
-  @Patch(':id')
+  @Patch('/:id')
   update(@Param('id') id: string, @Body() pokemonDto: PokemonDto) {
     return this.pokemonService.update(+id, pokemonDto);
   }

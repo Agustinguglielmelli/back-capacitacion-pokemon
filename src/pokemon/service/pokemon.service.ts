@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PokemonDto } from '../dto/pokemonDto';
 import { PokemonRepository } from '../repository/pokemon.repository';
 
@@ -12,18 +12,50 @@ export class PokemonService {
   }
 
   findAll() {
-    return `This action returns all pokemon`;
+    return this.pokemonRepository.findAll();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} pokemon`;
+  async findOnePokemon(id: number) {
+    if (isNaN(id) || id <= 0) {
+      throw new BadRequestException({
+        statusCode: 400,
+        message: 'El ID debe ser un número positivo',
+        error: 'Bad Request',
+      });
+    }
+    const pokemon = await this.pokemonRepository.getPokemonByid(id);
+
+    if (!pokemon) {
+      throw new BadRequestException({
+        statusCode: 404,
+        message: `Pokemon with ID ${id} not found`,
+        error: 'Not Found',
+      });
+    }
+    return pokemon;
   }
 
-  update(id: number, pokemonDto: PokemonDto) {
-    return `This action updates a #${id} pokemon`;
+  async update(id: number, pokemonDto: PokemonDto) {
+    if (isNaN(id) || id <= 0) {
+      throw new BadRequestException({
+        statusCode: 400,
+        message: 'El ID debe ser un número positivo',
+        error: 'Bad Request',
+      });
+    }
+    const pokemon = await this.pokemonRepository.getPokemonByid(id);
+    if (!pokemon) {
+      throw new BadRequestException({
+        statusCode: 404,
+        message: `Pokemon with ID ${id} not found`,
+        error: 'Not Found',
+      });
+    }
+
+    return this.pokemonRepository.updatePokemon(id, pokemonDto);
   }
 
   remove(id: number) {
-    return `This action removes a #${id} pokemon`;
+    return this.pokemonRepository.deletePokemon(id);
   }
 }
