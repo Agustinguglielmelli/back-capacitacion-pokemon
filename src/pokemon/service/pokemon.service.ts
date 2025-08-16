@@ -58,4 +58,22 @@ export class PokemonService {
   remove(id: number) {
     return this.pokemonRepository.deletePokemon(id);
   }
+
+  async findPaginated(query: { page?: number, limit?: number, search?: string, type?: string }) {
+    console.log('Query:', query);
+    return this.pokemonRepository.findPaginated(query);
+  }
+
+  async getPokemonsByAbilityName(name: string) {
+    if (!name) {
+      throw new BadRequestException('El parámetro name es requerido');
+    }
+    return this.pokemonRepository.getPokemonsByAbilityName(name);
+  }
+  async getAbilitiesByName(name: string) {
+    if (!name) {
+      throw new BadRequestException('El parámetro name es requerido');
+    }
+    return this.pokemonRepository.getAbilitiesByName(name);
+  }
 }

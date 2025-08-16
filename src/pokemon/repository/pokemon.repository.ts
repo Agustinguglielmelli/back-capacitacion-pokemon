@@ -40,4 +40,53 @@ export class PokemonRepository {
     return this.prisma.pokemon.findMany();
   }
 
+  async findPaginated({ page = 1, limit = 10, search, type }: { page?: number, limit?: number, search?: string, type?: string }) {
+    const where: any = {}; // para ir armando el where de la consulta
+    if (search) {
+      where.name = { contains: search.trim(), mode: 'insensitive' };
+    }
+    if (type) {
+      where.type = { contains: type, mode: 'insensitive' };
+    }
+    const [data, total] = await Promise.all([
+      this.prisma.pokemon.findMany({
+        where,
+        skip: (page - 1) * limit, // para saltar registros
+        take: limit,
+      }),
+      this.prisma.pokemon.count({ where }),
+    ]);
+    console.log('Data:', data, 'Total:', total, 'Page:', page, 'Limit:', limit);
+    return { data, total, page, limit };
+  }
+
+  async getPokemonsByAbilityName(abilityName: string) {
+    return this.prisma.pokemon.findMany({
+      where: {
+        abilities: {
+          some: {
+            name: {
+              equals: abilityName.trim(),
+              mode: 'insensitive',
+            },
+          },
+        },
+      },
+      include: {
+        abilities: true,
+      },
+    });
+  }
+
+  async getAbilitiesByName(name: string) {
+    return this.prisma.ability.findMany({
+      where: {
+        name: {
+          contains: name.trim(),
+          mode: 'insensitive',
+        },
+      },
+    });
+  }
+
 }
