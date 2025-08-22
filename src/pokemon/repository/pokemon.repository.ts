@@ -1,19 +1,18 @@
-import { Controller } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { PokemonDTO } from '../dto/pokemonDTO';
-import { Pokemon } from '@prisma/client';
 import { PokemonRepositoryInterface } from './pokemon.repository.interface';
 import { PaginatedPokemonsDTO } from '../dto/paginatedPokemonsDTO';
 import { PokemonResponseDTO } from '../dto/pokemonResponseDTO';
 import { PaginatedResponseDto } from '../dto/paginatedResponseDTO';
+import { Injectable } from '@nestjs/common';
 
-@Controller()
+@Injectable()
 export class PokemonRepository extends PokemonRepositoryInterface {
   constructor(private prisma: PrismaService) {
     super();
   }
 
-  createPokemon(dto: PokemonDTO): Promise<PokemonResponseDTO> {
+  async createPokemon(dto: PokemonDTO): Promise<PokemonResponseDTO> {
     const data = {
       name: dto.name,
       type: dto.type,
@@ -21,28 +20,35 @@ export class PokemonRepository extends PokemonRepositoryInterface {
       weight: dto.weight,
       imageUrl: dto.imageUrl,
     };
-    return this.prisma.pokemon.create({ data });
+    const pokemon = await this.prisma.pokemon.create({ data });
+    return new PokemonResponseDTO(pokemon);
   }
 
   async getPokemonByid(id: string): Promise<PokemonResponseDTO | null> {
-    return this.prisma.pokemon.findUnique({
+    const pokemon = await this.prisma.pokemon.findUnique({
       where: { id },
     });
+    return pokemon ? new PokemonResponseDTO(pokemon) : null;
   }
 
   async updatePokemon(id: string, data: PokemonDTO): Promise<PokemonResponseDTO> {
-    return this.prisma.pokemon.update({
+    const pokemon = await this.prisma.pokemon.update({
       where: { id },
       data,
     });
+    return new PokemonResponseDTO(pokemon);
   }
   async deletePokemon(id: string): Promise<PokemonResponseDTO> {
-    return this.prisma.pokemon.delete({
+    const pokemon = await this.prisma.pokemon.delete({
       where: { id },
     });
+    return new PokemonResponseDTO(pokemon);
   }
 
   async findPaginated({ page = 1, limit = 10, search, type }: PaginatedPokemonsDTO): Promise<PaginatedResponseDto> {
+    const pageNum = parseInt(page.toString(), 10) || 1;
+    const limitNum = parseInt(limit.toString(), 10) || 10;
+
     const where: any = {}; // para ir armando el where de la consulta
     if (search) {
       where.name = { contains: search, mode: 'insensitive' };
@@ -53,14 +59,14 @@ export class PokemonRepository extends PokemonRepositoryInterface {
     const [data, total] = await Promise.all([
       this.prisma.pokemon.findMany({
         where,
-        skip: (page - 1) * limit, // para saltar registros
-        take: limit,
+        skip: (pageNum - 1) * limitNum, // para saltar registros
+        take: limitNum, // para limitar registros
       }),
       this.prisma.pokemon.count({ where }),
     ]);
     const pokemonDTOS = data.map(
       (pokemon) => new PokemonResponseDTO(pokemon));
 
-    return new PaginatedResponseDto(pokemonDTOS, total, page, limit);
+    return new PaginatedResponseDto(pokemonDTOS, total, pageNum, limitNum);
   }
 }

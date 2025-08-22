@@ -1,4 +1,3 @@
-import { Pokemon } from '@prisma/client';
 import { PokemonDTO } from '../dto/pokemonDTO';
 import { PaginatedPokemonsDTO } from '../dto/paginatedPokemonsDTO';
 import { PokemonResponseDTO } from '../dto/pokemonResponseDTO';
