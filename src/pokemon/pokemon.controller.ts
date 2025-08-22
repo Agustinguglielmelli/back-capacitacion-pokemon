@@ -5,59 +5,41 @@ import {
   Body,
   Patch,
   Param,
-  Delete, Query, ParseIntPipe,
+  Delete, Query
 } from '@nestjs/common';
 import { PokemonService } from './pokemon.service';
-import { PokemonDto } from './dto/pokemonDto';
+import { PokemonDTO } from './dto/pokemonDTO';
+import { PaginatedPokemonsDTO } from './dto/paginatedPokemonsDTO';
+import { PokemonResponseDTO } from './dto/pokemonResponseDTO';
+import { PaginatedResponseDto } from './dto/paginatedResponseDTO';
 
 @Controller('pokemons')
 export class PokemonController {
   constructor(private readonly pokemonService: PokemonService) {}
 
-  @Get('/paginated')
-  findPaginated(
-    @Query('page') page?: number,
-    @Query('limit') limit?: number,
-    @Query('search') search?: string,
-    @Query('type') type?: string,
-  ) {
-    console.log('Page:', page, 'Limit:', limit, 'Search:', search, 'Type:', type);
-    return this.pokemonService.findPaginated({
-      page: page ? Number(page) : 1,
-      limit: limit ? Number(limit) : 10,
-      search,
-      type,
-    });
-  }
-
-  @Get('/abilities')
-  getPokemonsByAbilityName(@Query('name') name: string) {
-    return this.pokemonService.getPokemonsByAbilityName(name);
+  @Get('')
+  findPaginated(@Query() paginatedDTO: PaginatedPokemonsDTO,): Promise<PaginatedResponseDto> {
+    return this.pokemonService.findPaginated(paginatedDTO);
   }
 
   @Post()
-  create(@Body() dto: PokemonDto) {
+  create(@Body() dto: PokemonDTO): Promise<PokemonResponseDTO> {
     return this.pokemonService.create(dto);
   }
 
-  @Get()
-  findAll() {
-    return this.pokemonService.findAll();
-  }
-
   @Get('/:id')
-  findOne(@Param('id', ParseIntPipe) id: string) {
-    return this.pokemonService.findOnePokemon(+id); // the + converts to number
+  findOne(@Param('id') id: string): Promise<PokemonResponseDTO> {
+    return this.pokemonService.findOnePokemon(id);
   }
 
   @Patch('/:id')
-  update(@Param('id', ParseIntPipe) id: string, @Body() pokemonDto: PokemonDto) {
-    return this.pokemonService.update(+id, pokemonDto);
+  update(@Param('id') id: string, @Body() pokemonDto: PokemonDTO): Promise<PokemonResponseDTO> {
+    return this.pokemonService.update(id, pokemonDto);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: string) {
-    return this.pokemonService.remove(+id);
+  remove(@Param('id') id: string): Promise<PokemonResponseDTO> {
+    return this.pokemonService.remove(id);
   }
 
 

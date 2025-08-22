@@ -1,23 +1,17 @@
 import { Pokemon } from '@prisma/client';
-import { PokemonDto } from '../dto/pokemonDto';
+import { PokemonDTO } from '../dto/pokemonDTO';
+import { PaginatedPokemonsDTO } from '../dto/paginatedPokemonsDTO';
+import { PokemonResponseDTO } from '../dto/pokemonResponseDTO';
+import { PaginatedResponseDto } from '../dto/paginatedResponseDTO';
 
 export abstract class PokemonRepositoryInterface {
-  abstract createPokemon(dto: PokemonDto): Promise<Pokemon>;
+  abstract createPokemon(dto: PokemonDTO): Promise<PokemonResponseDTO>;
 
-  abstract getPokemonByid(id: number): Promise<Pokemon | null>;
+  abstract getPokemonByid(id: string): Promise<PokemonResponseDTO | null>;
 
-  abstract updatePokemon(id: number, data: PokemonDto): Promise<Pokemon>;
+  abstract updatePokemon(id: string, data: PokemonDTO): Promise<PokemonResponseDTO>;
 
-  abstract deletePokemon(id: number): Promise<Pokemon>;
+  abstract deletePokemon(id: string): Promise<PokemonResponseDTO>;
 
-  abstract findAll(): Promise<Pokemon[]>;
-
-  abstract findPaginated(params: {
-    page?: number;
-    limit?: number;
-    search?: string;
-    type?: string;
-  }): Promise<{ data: Pokemon[]; total: number; page: number; limit: number }>;
-
-  abstract getPokemonsByAbilityName(abilityName: string): Promise<Pokemon[]>;
+  abstract findPaginated(params: PaginatedPokemonsDTO): Promise<PaginatedResponseDto>;
 }

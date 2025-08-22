@@ -1,29 +1,21 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { PokemonDto } from './dto/pokemonDto';
+import { PokemonDTO } from './dto/pokemonDTO';
 import { PokemonRepository } from './repository/pokemon.repository';
 import { PokemonServiceInterface } from './pokemon.service.interface';
+import { PaginatedPokemonsDTO } from './dto/paginatedPokemonsDTO';
+import { PokemonResponseDTO } from './dto/pokemonResponseDTO';
+import { PaginatedResponseDto } from './dto/paginatedResponseDTO';
 
 @Injectable()
 export class PokemonService extends PokemonServiceInterface {
   constructor(private readonly pokemonRepository: PokemonRepository) {
     super();
   }
-  create(pokemonDto: PokemonDto) {
+  create(pokemonDto: PokemonDTO): Promise<PokemonResponseDTO> {
     return this.pokemonRepository.createPokemon(pokemonDto);
   }
 
-  findAll() {
-    return this.pokemonRepository.findAll();
-  }
-
-  async findOnePokemon(id: number) {
-    if (isNaN(id) || id <= 0) {
-      throw new BadRequestException({
-        statusCode: 400,
-        message: 'El ID debe ser un número positivo',
-        error: 'Bad Request',
-      });
-    }
+  async findOnePokemon(id: string): Promise<PokemonResponseDTO> {
     const pokemon = await this.pokemonRepository.getPokemonByid(id);
 
     if (!pokemon) {
@@ -36,14 +28,8 @@ export class PokemonService extends PokemonServiceInterface {
     return pokemon;
   }
 
-  async update(id: number, pokemonDto: PokemonDto) {
-    if (isNaN(id) || id <= 0) {
-      throw new BadRequestException({
-        statusCode: 400,
-        message: 'El ID debe ser un número positivo',
-        error: 'Bad Request',
-      });
-    }
+  async update(id: string, pokemonDto: PokemonDTO): Promise<PokemonResponseDTO> {
+    
     const pokemon = await this.pokemonRepository.getPokemonByid(id);
     if (!pokemon) {
       throw new BadRequestException({
@@ -56,20 +42,12 @@ export class PokemonService extends PokemonServiceInterface {
     return this.pokemonRepository.updatePokemon(id, pokemonDto);
   }
 
-  remove(id: number) {
+  remove(id: string): Promise<PokemonResponseDTO> {
     return this.pokemonRepository.deletePokemon(id);
   }
 
-  async findPaginated(query: { page?: number, limit?: number, search?: string, type?: string }) {
-    console.log('Query:', query);
+  async findPaginated(query: PaginatedPokemonsDTO): Promise<PaginatedResponseDto> {
     return this.pokemonRepository.findPaginated(query);
-  }
-
-  async getPokemonsByAbilityName(name: string) {
-    if (!name) {
-      throw new BadRequestException('El parámetro name es requerido');
-    }
-    return this.pokemonRepository.getPokemonsByAbilityName(name);
   }
 
 }

@@ -1,21 +1,16 @@
+import { PaginatedPokemonsDTO } from './dto/paginatedPokemonsDTO';
+import { PokemonResponseDTO } from './dto/pokemonResponseDTO';
+import { PokemonDTO } from './dto/pokemonDTO';
+import { PaginatedResponseDto } from './dto/paginatedResponseDTO';
 
 export abstract class PokemonServiceInterface {
-  abstract create(dto: any): Promise<any>;
+  abstract create(dto: PokemonDTO): Promise<PokemonResponseDTO>;
 
-  abstract findAll(): Promise<any[]>;
+  abstract findOnePokemon(id: string): Promise<PokemonResponseDTO>;
 
-  abstract findOnePokemon(id: number): Promise<any>;
+  abstract update(id: string, dto: PokemonDTO): Promise<PokemonResponseDTO>;
 
-  abstract update(id: number, dto: any): Promise<any>;
+  abstract remove(id: string): Promise<PokemonResponseDTO>;
 
-  abstract remove(id: number): Promise<any>;
-
-  abstract findPaginated(params: {
-    page?: number;
-    limit?: number;
-    search?: string;
-    type?: string;
-  }): Promise<{ data: any[]; total: number; page: number; limit: number }>;
-
-  abstract getPokemonsByAbilityName(abilityName: string): Promise<any[]>;
+  abstract findPaginated(params: PaginatedPokemonsDTO): Promise<PaginatedResponseDto>;
 }

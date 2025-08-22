@@ -9,7 +9,11 @@ export class AbilityService {
 
   async getAbilitiesByName(name: string) {
     if (!name) {
-      throw new BadRequestException('El parámetro name es requerido');
+      throw new BadRequestException({
+        statusCode: 400,
+        message: 'No se pasó ningún nombre para buscar',
+        error: 'Bad Request',
+      });
     }
     return this.abilityRepository.getAbilitiesByName(name);
   }
