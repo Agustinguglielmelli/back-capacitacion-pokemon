@@ -42,7 +42,7 @@ async function main() {
     const abilities = pokeDetails.abilities.map((a) => a.ability.name);
 
     // Crear habilidades en DB si no existen
-    const abilityRecords: { id: number; name: string }[] = [];
+    const abilityRecords: { id: string; name: string }[] = [];
     for (const abilityName of abilities) {
       const ability = await prisma.ability.upsert({
         where: { name: abilityName },

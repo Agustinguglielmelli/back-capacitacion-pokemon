@@ -14,7 +14,7 @@ datasource db {
 }
 
 model Pokemon {
-  id        Int       @id @default(autoincrement())
+  id        String    @id @default(uuid())
   name      String    @unique
   type      String
   height    Float
@@ -27,7 +27,7 @@ model Pokemon {
 }
 
 model Ability {
-  id       Int       @id @default(autoincrement())
+  id       String    @id @default(uuid())
   name     String    @unique
   pokemons Pokemon[] @relation("PokemonAbilities")
 }
