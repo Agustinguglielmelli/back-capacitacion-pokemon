@@ -1,11 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { PokemonDto } from '../dto/pokemonDto';
-import { PokemonRepository } from '../repository/pokemon.repository';
+import { PokemonDto } from './dto/pokemonDto';
+import { PokemonRepository } from './repository/pokemon.repository';
+import { PokemonServiceInterface } from './pokemon.service.interface';
 
 @Injectable()
-export class PokemonService {
+export class PokemonService extends PokemonServiceInterface {
   constructor(private readonly pokemonRepository: PokemonRepository) {
-
+    super();
   }
   create(pokemonDto: PokemonDto) {
     return this.pokemonRepository.createPokemon(pokemonDto);
@@ -70,10 +71,5 @@ export class PokemonService {
     }
     return this.pokemonRepository.getPokemonsByAbilityName(name);
   }
-  async getAbilitiesByName(name: string) {
-    if (!name) {
-      throw new BadRequestException('El parámetro name es requerido');
-    }
-    return this.pokemonRepository.getAbilitiesByName(name);
-  }
+
 }

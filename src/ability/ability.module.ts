@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { AbilityController } from './controller/ability.controller';
+import { AbilityController } from './ability.controller';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AbilityRepository } from './repository/ability.repository';
-import { AbilityService } from './service/ability.service';
+import { AbilityService } from './ability.service';
 
 @Module({
   controllers: [AbilityController],

@@ -1,11 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Controller, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { PokemonDto } from '../dto/pokemonDto';
 import { Pokemon, Prisma } from '@prisma/client';
+import { PokemonRepositoryInterface } from './pokemon.repository.interface';
 
-@Injectable()
-export class PokemonRepository {
-  constructor(private prisma: PrismaService) {}
+@Controller()
+export class PokemonRepository extends PokemonRepositoryInterface {
+  constructor(private prisma: PrismaService) {
+    super();
+  }
 
   createPokemon(dto: PokemonDto) {
     const data = {
@@ -78,15 +81,6 @@ export class PokemonRepository {
     });
   }
 
-  async getAbilitiesByName(name: string) {
-    return this.prisma.ability.findMany({
-      where: {
-        name: {
-          contains: name.trim(),
-          mode: 'insensitive',
-        },
-      },
-    });
-  }
+
 
 }

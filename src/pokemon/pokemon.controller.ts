@@ -7,8 +7,8 @@ import {
   Param,
   Delete, Query, ParseIntPipe,
 } from '@nestjs/common';
-import { PokemonService } from '../service/pokemon.service';
-import { PokemonDto } from '../dto/pokemonDto';
+import { PokemonService } from './pokemon.service';
+import { PokemonDto } from './dto/pokemonDto';
 
 @Controller('pokemons')
 export class PokemonController {
@@ -60,9 +60,6 @@ export class PokemonController {
     return this.pokemonService.remove(+id);
   }
 
-  @Get('/abilities/list')
-  getAbilitiesByName(@Query('name') name: string) {
-    return this.pokemonService.getAbilitiesByName(name);
-  }
+
 
 }

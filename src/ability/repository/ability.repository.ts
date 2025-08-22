@@ -6,9 +6,14 @@ import { AbilityDto } from '../dto/ability.dto';
 export class AbilityRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(abilityDto: AbilityDto) {
-    return this.prisma.ability.create({
-      data: abilityDto,
+  async getAbilitiesByName(name: string) {
+    return this.prisma.ability.findMany({
+      where: {
+        name: {
+          contains: name.trim(),
+          mode: 'insensitive',
+        },
+      },
     });
   }
 }
